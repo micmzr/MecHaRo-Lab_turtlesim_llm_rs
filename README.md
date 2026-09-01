@@ -1,5 +1,6 @@
 A simple trajectory planner for turtlesim using LLM
 
+```text
 [ User ] -------------> ( Text prompt ) 
                             |  
                             v  /llm_cmd
@@ -32,7 +33,7 @@ A simple trajectory planner for turtlesim using LLM
                            |
                            v  /turtle1/cmd_vel
                      [ turtlesim ]
-
+```
 
 **_Install_**
 
