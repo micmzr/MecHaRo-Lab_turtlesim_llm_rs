@@ -1,0 +1,6 @@
+ws_ros2_llm/build/
+ws_ros2_llm/install/
+ws_ros2_llm/log/
+ws_ros2_llm/.cargo/
+ws_ros2_llm/turtlesim_llm_rs/target/
+ws_ros2_llm/turtlesim_llm_rs/Cargo.lock

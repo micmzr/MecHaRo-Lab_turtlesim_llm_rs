@@ -1,0 +1,10 @@
+# Goal definition
+geometry_msgs/Point[] waypoints
+---
+# Result definition
+bool success
+uint32 waypoints_completed
+---
+# Feedback definition
+uint32 current_waypoint_index
+
