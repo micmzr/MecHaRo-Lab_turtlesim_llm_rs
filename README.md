@@ -29,7 +29,7 @@ A simple trajectory planner for turtlesim using LLM
            |    |         Control Loop          |  |<--- /turtle1/pose (turtlesim)
            |    +-------------------------------+  |           
            |                                       |
-           +--+------------------------------------+
+           +---------------------------------------+
                            |
                            v  /turtle1/cmd_vel
                      [ turtlesim ]
