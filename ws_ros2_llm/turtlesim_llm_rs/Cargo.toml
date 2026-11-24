@@ -14,7 +14,7 @@ path = "src/waypoint_follower.rs"
 
 [dependencies]
 anyhow = {version = "1", features = ["backtrace"]}
-rclrs = "0.8"
+rclrs = { git = "https://github.com/micmzr/ros2_rust.git" }
 ros-env = "0.3"
 rosidl_runtime_rs = "0.7"
 serde = { version = "1.0", features = ["derive"] }
