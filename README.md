@@ -62,3 +62,10 @@ _User - example text prompt_
 ros2 topic pub --once /llm_cmd std_msgs/msg/String "data: 'draw a rectangle'"
 ```
 
+If foundry_local_sdk is not downloaded correctly: 
+``` bash
+python3 -m venv .venv_foundry_local_sdk
+.venv_foundry_local_sdk/bin/pip install foundry-local-sdk
+export FOUNDRY_LOCAL_LIB_DIR="$(pwd)/.venv_foundry_local_sdk/lib/python3.14/site-packages/foundry_local_sdk/_native/linux-x64/"
+```
+
