@@ -8,9 +8,10 @@ use ros_env::std_msgs::msg::String as StringMsg;
 
 use ros_env::geometry_msgs::msg::Point as PointMsg;
 
-use foundry_local_sdk::{ChatCompletionRequestMessage,
-    ChatCompletionRequestUserMessage, ChatCompletionRequestSystemMessage,
-    FoundryLocalConfig, FoundryLocalManager};
+use foundry_local_sdk::{
+    ChatSession, FoundryLocalConfig, FoundryLocalManager, 
+    Item, Request, RequestOptions, TextKind,
+};
 
 use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc;
@@ -93,18 +94,15 @@ async fn main() -> Result<()> {
         .run()
         .await?;
 
-    // print!("\n");
-
     log!(tllm_node.logger().once(),
         "Loading model {}...", model_name);
     model.load().await?;
 
-    let client = model.create_chat_client();
-    // Configure generation settings (fluent builder)
-        // .temperature(0.7)
-        // .max_tokens(256)
-        // .top_p(0.9)
-        // .frequency_penalty(0.5);
+    let session = ChatSession::new(&model).await?;
+    let mut options = RequestOptions::default();
+    options.search.temperature = Some(0.7);
+    options.search.max_output_tokens = Some(256);
+    session.set_options(options).await?;
 
     let tllm_node_ptr = Arc::new(Mutex::new(tllm_node));
     let tllm_node_ptr_clone = Arc::clone(&tllm_node_ptr);
@@ -167,16 +165,30 @@ REQUIRED JSON SCHEMA:
 
                             log_debug!(&n_name, "Sending system message to LLM: {}", system_msg);
 
-                            let messages: Vec<ChatCompletionRequestMessage> = vec![
-                                ChatCompletionRequestSystemMessage::from(system_msg).into(),
-                                ChatCompletionRequestUserMessage::from(data).into()
+                            let items: Vec<Item> = vec![
+                                Item::system_message(vec![Item::text(system_msg)]),
+                                Item::user_message(vec![Item::text(data)]),
                             ];
 
-                            let response = client.complete_chat(&messages, None).await.unwrap();
+                            let request = Request::from_items(items);
+                            
+                            let response = session.process_request(request).await.unwrap();
+                            let mut final_answer = String::new();
 
-                            log_info!(&n_name, "LLM response: {}", response.choices[0].message.content.as_deref().unwrap_or(""));
+                            for item in response.items {
+                            if let Item::Text {
+                                text,
+                                kind: TextKind::Default,
+                                } = item
+                                {
+                                    final_answer.push_str(&text);
 
-                            let striped_response = strip_think(response.choices[0].message.content.as_deref().unwrap_or(""));
+                                }
+                            }
+                            
+                            log_info!(&n_name, "LLM response: {}", final_answer);
+
+                            let striped_response = strip_think(&final_answer);
 
                             log_debug!(&n_name, "Stripped response: {}", &striped_response);
 
